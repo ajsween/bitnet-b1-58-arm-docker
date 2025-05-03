@@ -1,0 +1,44 @@
+# docker build -t bitnet-arm:latest .
+# docker run -it bitnet-arm:latest
+
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Install dependencies for BitNet
+RUN <<EOF
+apt update && apt install -y \
+    python3-pip \
+    python3-dev \
+    cmake build-essential \
+    git \
+    software-properties-common \
+    wget
+rm -rf /var/lib/apt/lists/*
+wget -O - https://apt.llvm.org/llvm.sh | bash -s 18
+git clone --recursive https://github.com/microsoft/BitNet.git
+cd /BitNet
+pip install --no-cache-dir -r requirements.txt
+  
+python utils/codegen_tl1.py \
+    --model bitnet_b1_58-3B \
+    --BM 160,320,320 \
+    --BK 64,128,64 \
+    --bm 32,64,32
+  
+export CC=clang-18 CXX=clang++-18
+rm -rf build && mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j$(nproc)
+cd /BitNet
+    
+huggingface-cli download microsoft/BitNet-b1.58-2B-4T-gguf \
+    --local-dir models/BitNet-b1.58-2B-4T
+EOF
+
+WORKDIR /BitNet
+
+# Set entrypoint for more flexibility
+ENTRYPOINT ["python", "run_inference.py"]
+
+# Default command arguments
+CMD ["-m", "/BitNet/models/BitNet-b1.58-2B-4T/ggml-model-i2_s.gguf", "-n", "512", "-cnv", "-t", "4", "-c", "4096", "-p", "Hello from BitNet!"]
