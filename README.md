@@ -28,7 +28,7 @@ docker run --rm bitnet-b1.58-2b-4t-arm:latest \
   -c 4096 \
   -n 1024
 ```
-### Run interactice without STDERR:
+### Run interactive without STDERR:
 I find the statistics that are visible through including STDERR in STDOUT to be useful but if you want to only see the Prompts and Responses remove the pseudo-TTY option (-t).
 ```bash
 docker run -i --rm bitnet-b1.58-2b-4t-arm:latest
