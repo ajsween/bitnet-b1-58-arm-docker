@@ -6,19 +6,53 @@ You might need to increase the resources available to Rancher Desktop (or Docker
 
 I put together the steps to get this working on ARM from [Bjan Bowen's Blog](https://www.bijanbowen.com/bitnet-b1-58-on-raspberry-pi-4b/).
 
-### Clone
+### Clone from GitHub:
 ```bash
 git clone https://github.com/ajsween/bitnet-b1-58-arm-docker.git
 ```
-### Build
+### Build Docker container:
 ```bash
 cd bitnet-b1-58-arm-docker
 docker build -t bitnet-b1.58-2b-4t-arm:latest .
 ```
-### Run
+### Run interactive:
 ```bash
 docker run -it --rm bitnet-b1.58-2b-4t-arm:latest
 ```
+### Run noninteractive with arguments:
+```bash
+docker run --rm bitnet-b1.58-2b-4t-arm:latest \
+  -m models/BitNet-b1.58-2B-4T/ggml-model-i2_s.gguf \
+  -p "Hello from BitNet on Pi4!" \
+  -t 4 \
+  -c 4096 \
+  -n 1024
+```
+
+### Reference for run_interference.py (ENTRYPOINT):
+```bash
+usage: run_inference.py [-h] [-m MODEL] [-n N_PREDICT] -p PROMPT [-t THREADS] [-c CTX_SIZE] [-temp TEMPERATURE] [-cnv]
+
+Run inference
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -m MODEL, --model MODEL
+                        Path to model file
+  -n N_PREDICT, --n-predict N_PREDICT
+                        Number of tokens to predict when generating text
+  -p PROMPT, --prompt PROMPT
+                        Prompt to generate text from
+  -t THREADS, --threads THREADS
+                        Number of threads to use
+  -c CTX_SIZE, --ctx-size CTX_SIZE
+                        Size of the prompt context
+  -temp TEMPERATURE, --temperature TEMPERATURE
+                        Temperature, a hyperparameter that controls the randomness of the generated text
+  -cnv, --conversation  Whether to enable chat mode or not (for instruct models.)
+                        (When this option is turned on, the prompt specified by -p will be used as the system prompt.)
+```
+
 ### bash Commands I based the Dockerfile on:
 ```bash
 apt update && apt install -y \
