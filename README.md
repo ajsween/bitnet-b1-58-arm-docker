@@ -23,10 +23,11 @@ docker run -it --rm bitnet-b1.58-2b-4t-arm:latest
 ```bash
 docker run --rm bitnet-b1.58-2b-4t-arm:latest \
   -m models/BitNet-b1.58-2B-4T/ggml-model-i2_s.gguf \
-  -p "Hello from BitNet on Pi4!" \
+  -p "How do I change a tire?\n" \
   -t 4 \
   -c 4096 \
-  -n 1024
+  --temp 0.4 \
+  -n 1024 2&>/dev/null
 ```
 ### Run interactive without STDERR:
 I find the statistics that are visible through including STDERR in STDOUT to be useful but if you want to only see the Prompts and Responses remove the pseudo-TTY option (-t).
