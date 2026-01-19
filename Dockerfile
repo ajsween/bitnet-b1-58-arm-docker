@@ -16,12 +16,13 @@ RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
     git \
-    software-properties-common \
+    lsb-release \
     wget \
+    gnupg \
     && rm -rf /var/lib/apt/lists/*
 
 # Install LLVM
-RUN wget -O - https://apt.llvm.org/llvm.sh | bash -s 18
+RUN wget -O - https://apt.llvm.org/llvm.sh | bash -s 20
 
 # Clone the BitNet repository
 WORKDIR /build
@@ -38,7 +39,7 @@ RUN pip install --no-cache-dir -r requirements.txt \
         --BM 160,320,320 \
         --BK 64,128,64 \
         --bm 32,64,32 \
-    && export CC=clang-18 CXX=clang++-18 \
+    && export CC=clang-20 CXX=clang++-20 \
     && mkdir -p build && cd build \
     && cmake .. -DCMAKE_BUILD_TYPE=Release \
     && make -j$(nproc)
